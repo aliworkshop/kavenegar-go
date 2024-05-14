@@ -1,6 +1,7 @@
 package kavenegar
 
 import (
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"net"
@@ -34,9 +35,13 @@ type Client struct {
 func NewClient(apikey string) *Client {
 	baseURL, _ := url.Parse(apiBaseURL)
 	c := &Client{
-		BaseClient: http.DefaultClient,
-		BaseURL:    baseURL,
-		apikey:     apikey,
+		BaseClient: &http.Client{
+			Transport: &http.Transport{
+				TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+			},
+		},
+		BaseURL: baseURL,
+		apikey:  apikey,
 	}
 	return c
 }
